@@ -1,89 +1,55 @@
-function searchMovie () {
-    $('#movie-list').html('');
+const API_KEY = 'api_key=9d223e8721e1d03ed3ee0b94439afea9'
+const BASE_URL = 'https://api.themoviedb.org/3'
+const API_URL = BASE_URL + '/discover/movie?sort_by=popularity.desc&' + API_KEY + '&page=1'
+const IMG_URL = 'https://image.tmdb.org/t/p/w500'
+const SEARCH_URL = BASE_URL + '/search/movie?' + API_KEY
 
-    $.ajax({
-        url: 'http://www.omdbapi.com',
-        type: 'get',
-        dataType: 'json',
-        data: {
-            'apikey': '568cd026',
-            's': $('#movie-name').val()
-        },
-        success: function (result) {
-            if (result.Response === "True"){
-                var movies = result.Search;
+const mainElement = document.getElementById('movie-list')
+const formElement = document.getElementById('form')
+const searchElement = document.getElementById('movie-name')
 
-                $.each(movies, function (i, data) {
-                    $('#movie-list').append(`
-                        <div class="col-md-4">
-                            <div class="card mb-3">
-                                <img src=`+ data.Poster +` class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">`+ data.Title +`</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">`+ data.Year +`</h6>
-                                    <a href="#" class="card-link see-detail" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="`+ data.imdbID +`">See Details</a>
-                                </div>
-                            </div>
+getMovies(API_URL)
+
+function getMovies(url) {
+    fetch(url).then(res => res.json()).then(data => {
+        showMovies(data.results)
+    })
+}
+
+function showMovies(data) {
+    mainElement.innerHTML = ''
+
+    data.forEach(element => {
+        const {title, poster_path, release_date, vote_average} = element
+        const movieElement = document.createElement('div')
+        movieElement.classList.add('row')
+        movieElement.innerHTML = `
+            <div class="col">
+                <div class="card mb-4">
+                    <img src="${IMG_URL + poster_path}" class="card-img-top" alt="${title}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <p class="card-title">${title}</p>
+                            <span class="card-title"><b>${vote_average}</b></span>
                         </div>
-                    `)
-                });
-                
-                $('#movie-name').val('');
+                        <p class="card-subtitle mb-2 text-muted">${release_date}</p>
+                    </div>
+                </div>
+            </div>
+        `
 
-            } else {
-                $('#movie-list').html(`
-                    <div class="col">
-                        <h1 class="text-center">` + result.Error + `</h1>
-                    </div
-                `)
-            }
-        }
+        mainElement.append(movieElement)
     });
 }
 
-$('#search-button').on('click', function () {
-    searchMovie();
-});
+formElement.addEventListener('submit', (e) => {
+    e.preventDefault()
 
-$('#movie-name').on('keyup', function (event) {
-    if (event.keyCode === 13){
-        searchMovie();
+    const searchTerm = searchElement.value
+
+    if(searchTerm) {
+        getMovies(SEARCH_URL + '&query=' + searchTerm + '&page=1')
+    } else {
+        getMovies(API_URL)
     }
-});
-
-$('#movie-list').on('click', '.see-detail', function() {
-    
-    $.ajax({
-        url: 'http://www.omdbapi.com',
-        type: 'get',
-        dataType: 'json',
-        data: {
-            'apikey': '568cd026',
-            'i':$(this).data('id')
-        },
-        success: function (movie) {
-            if (movie.Response === "True"){
-                $('.modal-body').html(`
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="`+ movie.Poster +`" class="img-fluid">
-                            </div>
-
-                            <div class="col-md-8">
-                                <ul class="list-group">
-                                    <li class="list-group-item"><h3>`+ movie.Title +`</h3></li>
-                                    <li class="list-group-item">Released : `+ movie.Released +`</li>
-                                    <li class="list-group-item">Genre : `+ movie.Genre +`</li>
-                                    <li class="list-group-item">Director : `+ movie.Director +`</li>
-                                    <li class="list-group-item">Actor : `+ movie.Actor +`</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                `)
-            }
-        }
-    })
-
-});
+})
