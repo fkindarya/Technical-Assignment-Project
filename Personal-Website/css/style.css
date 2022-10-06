@@ -1,0 +1,48 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: #494b50;
+	font-family: sans-serif;
+}
+
+nav {
+	float: inline;
+	text-align: center;
+	padding: 30px 0;
+	overflow: hidden;
+}
+
+nav a{
+	padding: 20px;
+	color: #eff4fd;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+nav a:hover{
+	text-decoration: underline;
+}
+
+section{
+	text-align: center;
+	color:whitesmoke;
+	padding: 30px 20px;
+}
+
+footer{
+	float: inline;
+	text-align: center;
+	padding: 30px 0;
+	overflow: hidden;
+}
+
+footer a{
+	padding: 20px;
+	color: #eff4fd;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+footer a:hover{
+	text-decoration: underline;
+}
