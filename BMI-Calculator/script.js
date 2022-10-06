@@ -1,7 +1,7 @@
-let weightInput = document.querySelector(".weight")
-let heightInput = document.querySelector(".height")
-let buttonCalculate = document.querySelector(".calculate")
-let paragraphResult = document.querySelector(".result-BMI")
+let weightInput = document.querySelector("#weight")
+let heightInput = document.querySelector("#height")
+let buttonCalculate = document.querySelector("#calculate")
+let paragraphResult = document.querySelector("#result-BMI")
 
 buttonCalculate.addEventListener("click", () => {
     let weight = weightInput.value
