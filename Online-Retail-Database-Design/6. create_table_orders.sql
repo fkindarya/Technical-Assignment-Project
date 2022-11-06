@@ -1,6 +1,6 @@
 CREATE TABLE `orders` (
-    `id` bigint(20) NOT NULL,
-    `id_customer` int NOT NULL,
+    `id` bigint(20) AUTO_INCREMENT NOT NULL,
+    `id_customer` bigint(20) NOT NULL,
     `amount` float,
     `order_name` varchar(255) NOT NULL,
     `order_address` varchar(255) NOT NULL,
@@ -8,5 +8,8 @@ CREATE TABLE `orders` (
     `order_date` date NOT NULL,
     `order_status` boolean NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`id_customer`) REFERENCES `customers`(`id`)
+    CONSTRAINT `fk_customer`
+    	FOREIGN KEY (`id_customer`) REFERENCES `customers`(`id`)
+    	ON DELETE RESTRICT
+      	ON UPDATE RESTRICT
 );
