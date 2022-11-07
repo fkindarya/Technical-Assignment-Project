@@ -3,7 +3,7 @@
 - Register `baseURL/auth/register` 
 - Login `baseURL/auth/login`
 ## ToDoList
-- GET All Todolist `baseURL/toolist`
+- GET All Todolist `baseURL/todolist`
 - POST Todolist `baseURL/todolist`
 - DELETE All Todolist `baseURL/todolist`
 - GET Todolist By ID `baseURL/todolist/:id`
