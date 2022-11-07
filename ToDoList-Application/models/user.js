@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // this.hasMany(ToDoList, { foreignKey: 'userId' })
     }
   }
   User.init({
@@ -20,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    defaultScope: {
+      attributes: { exclude: ['password'] }
+    }
   });
   return User;
 };
