@@ -22,7 +22,7 @@ let loginAuth = async(req, res) => {
     //     (user) => email === user.email && password === user.password
     // )
 
-    const userData = User.findOne(
+    const userData = await User.findOne(
         {
             where: {
                 email: email,
@@ -31,9 +31,11 @@ let loginAuth = async(req, res) => {
         }
     )
 
-    const token = jwt.sign(
+    const token = await jwt.sign(
         {
-            id: userData.id
+            id: userData.id,
+            fullName: userData.fullName,
+            email: userData.email
         }, 'secret', { expiresIn: '1h' }
     )
 
