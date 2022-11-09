@@ -8,7 +8,7 @@ let getAllToDoList = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        const verified = await jwt.verify(token, 'secret')
+        const verified = jwt.verify(token, 'secret')
 
         const todolists = await ToDoList.findAll(
             {
@@ -29,7 +29,7 @@ let addToDoList = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        const verified = await jwt.verify(token, 'secret')
+        const verified = jwt.verify(token, 'secret')
 
         const todolist = await ToDoList.create(
             {
@@ -52,15 +52,20 @@ let getToDoListByID = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        const verified = await jwt.verify(token, 'secret')
+        const verified = jwt.verify(token, 'secret')
         
         const todolist = await ToDoList.findByPk(req.params.id)
-        
-        if (todolist.userId != verified.id) {
-            res.status(401).json({message: "Unauthorized"})
+
+        if (!todolist) {
+            res.status(404).json({message: "No data found"})
+        } else {
+            if(todolist.userId != verified.id) {
+                res.status(401).json({message: "Unauthorized"})
+            } else {
+                res.status(200).json(todolist)
+            }
         }
 
-        res.status(200).json(todolist)
     } catch (error) {
         res.status(401).json({message: "Unauthorized"})
     }
@@ -71,28 +76,37 @@ let updateToDoListByID = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        await jwt.verify(token, 'secret')
-
-        await ToDoList.update(
-            {
-                title: req.body.title,
-                description: req.body.description,
-                startTime: req.body.startTime,
-                status: req.body.status
-            }, {
-                where: {
-                    id: req.params.id
-                }
-            }
-        )
+        const verified = jwt.verify(token, 'secret')
         
-        res.status(201).json({
-            message: 'Update success'
-        })
+        const todolist = await ToDoList.findByPk(req.params.id)
+
+        if (!todolist) {
+            res.status(404).json({message: "No data found"})
+        } else {
+            if(todolist.userId != verified.id) {
+                res.status(401).json({message: "Unauthorized"})
+            } else {
+                await ToDoList.update(
+                    {
+                        title: req.body.title,
+                        description: req.body.description,
+                        startTime: req.body.startTime,
+                        status: req.body.status
+                    }, {
+                        where: {
+                            id: req.params.id
+                        }
+                    }
+                )
+                
+                res.status(201).json({
+                    message: 'Update success'
+                })
+            }
+        }
     } catch (error) {
         res.status(401).json({message: "Unauthorized"})
     }
-
 }
 
 let deleteToDoListByID = async(req, res) => {
@@ -100,17 +114,27 @@ let deleteToDoListByID = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        await jwt.verify(token, 'secret')
+        const verified = jwt.verify(token, 'secret')
         
-        await ToDoList.destroy({
-            where: {
-                id: req.params.id
+        const todolist = await ToDoList.findByPk(req.params.id)
+
+        if (!todolist) {
+            res.status(404).json({message: "No data found"})
+        } else {
+            if(todolist.userId != verified.id) {
+                res.status(401).json({message: "Unauthorized"})
+            } else {
+                await ToDoList.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                })
+            
+                res.status(201).json({
+                    message: 'Delete success'
+                })
             }
-        })
-    
-        res.status(201).json({
-            message: 'Delete success'
-        })
+        }
     } catch (error) {
         res.status(401).json({message: "Unauthorized"})
     }
@@ -121,7 +145,7 @@ let deleteAllToDoList = async(req, res) => {
         const auth = await req.headers.authorization
         const token = await auth.split(" ")[1]
 
-        const verified = await jwt.verify(token, 'secret')
+        const verified = jwt.verify(token, 'secret')
 
         await ToDoList.destroy({
             where: {
@@ -130,7 +154,7 @@ let deleteAllToDoList = async(req, res) => {
         })
 
         res.status(201).json({
-            message: 'Delete success'
+            message: 'Delete all to do list success'
         })
 
     } catch (error) {
